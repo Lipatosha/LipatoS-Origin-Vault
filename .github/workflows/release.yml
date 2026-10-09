@@ -1,0 +1,101 @@
+name: Publish LipatoS Origin Vault
+on:
+  push:
+    branches: [main]
+    paths:
+      - source-bundle.tar.bz2
+      - module.json
+      - .github/workflows/release.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: lipatos-origin-vault-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Expand original and manually localized sources
+        run: |
+          python3 - <<'PY'
+          import pathlib, hashlib, tarfile
+          source = pathlib.Path('source-bundle.tar.bz2')
+          root = pathlib.Path.cwd()
+          expected = '7e6faf6364fd4579f26e129ed270bf1b1783837f3d31355aef821d9b9fe096b8'
+          if source.is_file():
+              assert hashlib.sha256(source.read_bytes()).hexdigest() == expected, 'staged source archive SHA mismatch'
+              with tarfile.open(source, mode='r:bz2') as tar:
+                  members = tar.getmembers()
+                  assert len(members) == 108, f'expected 108 files, got {len(members)}'
+                  for entry in members:
+                      path = pathlib.PurePosixPath(entry.name)
+                      assert len(path.parts) >= 2 and path.parts[0] == 'origin-vault'
+                      assert '..' not in path.parts and entry.isfile() and not entry.issym()
+                      target = root.joinpath(*path.parts[1:])
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      reader = tar.extractfile(entry)
+                      assert reader is not None
+                      target.write_bytes(reader.read())
+          assert pathlib.Path('module.json').is_file()
+          assert pathlib.Path('lang/ru.json').is_file()
+          PY
+      - name: Syntax and localization tests
+        run: |
+          find scripts -type f \( -name '*.js' -o -name '*.mjs' \) -print0 | xargs -0 -n1 node --check
+          node --test scripts/tests/*.unit.test.mjs
+      - name: Validate Foundry manifest and build ZIP
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, zipfile
+          root = pathlib.Path('.')
+          m = json.loads((root/'module.json').read_text(encoding='utf-8'))
+          assert m['id']=='origin-vault', m.get('id')
+          assert m['version']=='2.8.2', m.get('version')
+          assert m['manifest']=='https://github.com/Lipatosha/LipatoS-Origin-Vault/releases/latest/download/module.json'
+          assert m['download']=='https://github.com/Lipatosha/LipatoS-Origin-Vault/releases/latest/download/lipatos-origin-vault.zip'
+          assert any(l['lang']=='ru' and l['path']=='lang/ru.json' for l in m['languages'])
+          for f in m.get('esmodules', [])+m.get('styles', [])+[l['path'] for l in m['languages']]:
+              assert (root/f).is_file(), f
+          for p in root.rglob('*.json'):
+              if not any(x.startswith('.') for x in p.parts):
+                  json.loads(p.read_text(encoding='utf-8'))
+          entries = [p for p in sorted(root.rglob('*')) if p.is_file()
+                     and not any(x.startswith('.') for x in p.parts)
+                     and not p.name.endswith('.zip')
+                     and p.name != 'source-bundle.tar.bz2']
+          assert len(entries)>=108, len(entries)
+          with zipfile.ZipFile('lipatos-origin-vault.zip','w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+              for p in entries:
+                  z.write(p, 'origin-vault/'+p.as_posix())
+          with zipfile.ZipFile('lipatos-origin-vault.zip') as z:
+              assert z.testzip() is None
+              assert json.loads(z.read('origin-vault/module.json')) == m
+              assert 'origin-vault/lang/ru.json' in z.namelist()
+              print('Validated', len(z.namelist()), 'package files')
+          PY
+      - name: Publish full sources to main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm -f --ignore-unmatch source-bundle.tar.bz2
+          git add README.md module.json css lang scripts styles templates
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish complete LipatoS Origin Vault v2.8.2 sources'
+            git push origin HEAD:main
+          fi
+      - name: Create release with Foundry install assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "JSON.parse(require('fs').readFileSync('module.json', 'utf8')).version")
+          TAG="v$VERSION"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --target "$(git rev-parse HEAD)" --title "LipatoS — Origin Vault $TAG" --notes "Полная ручная русификация Origin Vault для Foundry VTT 13–14. Русский интерфейс, настройки, описания и фильтры. В модуле сохранён оригинальный ID origin-vault, данные миров не мигрируют. Автоматические тесты пройдены; проверка непосредственно в Foundry ещё требуется." --latest
+          fi
+          gh release upload "$TAG" module.json lipatos-origin-vault.zip --clobber
