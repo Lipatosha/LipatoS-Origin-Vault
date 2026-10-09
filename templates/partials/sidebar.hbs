@@ -1,0 +1,101 @@
+<div class="library-selector-container"></div>
+
+<div class="special-folders">
+    {{#each specialFolders}}
+    <div class="special-folder {{#if (eq ../currentFolderId this.id)}}selected{{/if}}" data-folder-id="{{this.id}}">
+        <i class="{{this.icon}}"></i>
+        <span class="folder-name">{{this.name}}</span>
+        <span class="item-count">{{this.count}}</span>
+    </div>
+    {{/each}}
+</div>
+
+<hr class="sidebar-divider">
+
+<div class="smart-folder-tree">
+    <div class="folder-tree-header smart-folder-tree-header">
+        <span><i class="fas fa-wand-magic-sparkles"></i> {{localize 'origin-vault.smartFolders.title'}}</span>
+        <button class="btn-new-smart-folder" title="{{localize 'origin-vault.smartFolders.new'}}">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <div class="smart-folder-list">
+        {{#each smartFolders}}
+        <div class="smart-folder {{#if this.isSelected}}selected{{/if}}" data-folder-id="{{this.id}}" title="{{this.name}}">
+            <i class="fas fa-wand-magic-sparkles folder-icon"></i>
+            <span class="folder-name">{{this.name}}</span>
+            <span class="item-count">{{this.itemCount}}</span>
+            <button class="btn-smart-folder-menu" data-folder-id="{{this.id}}"
+                title="{{localize 'origin-vault.ui.moreActions'}}">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+        </div>
+        {{else}}
+        <div class="smart-folder-empty">{{localize 'origin-vault.smartFolders.empty'}}</div>
+        {{/each}}
+    </div>
+</div>
+
+<hr class="sidebar-divider">
+
+<div class="folder-tree">
+    <div class="folder-tree-header">
+        <span>📁 {{localize 'origin-vault.folders.subfolders'}}</span>
+        <button class="btn-new-folder" title="{{localize 'origin-vault.folders.new'}}">
+            <i class="fas fa-folder-plus"></i>
+        </button>
+    </div>
+
+    <div class="folder-tree-content">
+
+        {{> folderTreeItems folders=folderTree}}
+    </div>
+</div>
+
+{{#*inline "folderTreeItems"}}
+{{#each folders}}
+<div class="folder-item-wrapper" style="--depth: {{this.depth}}" data-folder-id="{{this.id}}">
+    <div class="folder-item {{#if this.isSelected}}selected{{/if}} {{#if this.isEditing}}editing{{/if}}"
+        data-folder-id="{{this.id}}" draggable="true" title="{{this.name}}">
+
+        {{#if this.children.length}}
+        <span class="folder-toggle">
+            <i class="fas {{#if this.collapsed}}fa-chevron-right{{else}}fa-chevron-down{{/if}}"></i>
+        </span>
+        {{else}}
+        <span class="folder-toggle-placeholder"></span>
+        {{/if}}
+
+        <span class="folder-icon" {{#if this.color}}style="color: {{this.color}}" {{/if}}>
+            {{#if this.icon}}
+            <i class="fas fa-{{this.icon}}"></i>
+            {{else}}
+            <i class="fas fa-folder{{#unless this.collapsed}}-open{{/unless}}"></i>
+            {{/if}}
+        </span>
+
+        <span class="folder-name">{{this.name}}</span>
+
+        <span class="item-count">{{this.itemCount}}</span>
+
+        <div class="folder-hover-actions">
+            <button class="btn-add-subfolder" data-folder-id="{{this.id}}"
+                title="{{localize 'origin-vault.folders.new'}}">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="btn-folder-menu" data-folder-id="{{this.id}}"
+                title="{{localize 'origin-vault.ui.moreActions'}}">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+        </div>
+    </div>
+
+    {{#if this.children.length}}
+    <div class="folder-children" {{#if this.collapsed}}style="display: none;" {{/if}}>
+        {{> folderTreeItems folders=this.children}}
+    </div>
+    {{/if}}
+</div>
+{{/each}}
+{{/inline}}

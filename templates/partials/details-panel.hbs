@@ -1,0 +1,413 @@
+{{#if sceneBrowserVisible}}
+
+{{> scene-browser}}
+{{else if itemBrowserVisible}}
+{{> item-browser}}
+{{else if actorBrowserVisible}}
+{{> actor-browser}}
+{{else if browserVisible}}
+
+<div class="browser-header">
+    <span class="browser-title">📂 {{localize 'origin-vault.browser.title'}}</span>
+    <button class="btn-close-browser"><i class="fas fa-times"></i></button>
+</div>
+<div class="browser-content">
+
+</div>
+{{else}}
+
+<div class="details-content{{#if selectedDetail}}{{#if (eq selectedDetail.type 'actor')}} details-content--actor{{/if}}{{/if}}">
+    {{#if multiSelectDetail}}
+
+    <div class="details-preview multi-select-preview">
+        <div class="stacked-thumbnails">
+            {{#each multiSelectDetail.thumbnails}}
+            <img src="{{this}}" class="stacked-thumb" />
+            {{/each}}
+        </div>
+    </div>
+    <div class="multi-select-count">
+        {{localize 'origin-vault.status.selected' count=multiSelectDetail.count}}
+    </div>
+
+    <div class="details-form">
+        <div class="form-group">
+            <input type="text" class="details-input batch-notes-input"
+                placeholder="{{localize 'origin-vault.ui.addNotes'}}" data-field="notes">
+        </div>
+
+        {{#if multiSelectDetail.audioCount}}
+        <div class="form-group audio-actions" style="margin-top: 8px;">
+            <button class="ov-btn full-width primary btn-add-to-playlist">
+                <i class="fas fa-music"></i> {{localize 'origin-vault.playlist.addToPlaylist'}}
+                <span class="audio-count-hint">({{multiSelectDetail.audioCount}})</span>
+            </button>
+        </div>
+        {{/if}}
+
+        <div class="form-group tags-group">
+            <label>{{localize 'origin-vault.tags.title'}}</label>
+            <div class="tags-input-container">
+                <button class="btn-add-tag"><i class="fas fa-plus"></i> {{localize 'origin-vault.tags.addTag'}}</button>
+                {{#each multiSelectDetail.sharedTags}}
+                <span class="detail-tag" data-tag-id="{{this.id}}"
+                    style="border-left: 3px solid {{this.color}}; padding-left: 6px;">
+                    {{this.name}} <i class="fas fa-times btn-remove-tag"></i>
+                </span>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="form-group folder-group">
+            <label>{{localize 'origin-vault.folders.subfolders'}}</label>
+            <div class="tags-input-container folders-container">
+                {{#each multiSelectDetail.sharedFolders}}
+                <div class="folder-badge" data-folder-id="{{id}}" style="border-left: 3px solid {{color}};"
+                    title="{{name}}">
+                    <span class="folder-badge-name">{{name}}</span>
+                    {{#unless isRoot}}
+                    {{#unless ../isSmartFolderView}}
+                    <i class="fas fa-times btn-remove-from-folder"
+                        title="{{localize 'origin-vault.ui.removeFromFolder'}}"></i>
+                    {{/unless}}
+                    {{/unless}}
+                </div>
+                {{/each}}
+                <button class="btn-add-to-folder" title="{{localize 'origin-vault.ui.addToFolderCopy'}}">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="basic-info">
+            <h4>{{localize 'origin-vault.ui.basicInfo'}}</h4>
+            <div class="info-row">
+                <span class="label">{{localize 'origin-vault.ui.rating'}}</span>
+                <span class="value stars">
+                    {{#each multiSelectDetail.stars}}
+                    <i class="fas fa-star {{#if this.filled}}active{{/if}}" data-rating="{{this.value}}"
+                        style="cursor: pointer; color: {{#if this.filled}}#ffb400{{else}}#444{{/if}};"></i>
+                    {{/each}}
+                </span>
+            </div>
+        </div>
+
+        {{else if selectedDetail}}
+
+        {{#if (eq selectedDetail.type 'scene')}}
+        {{#if selectedDetail.hasSceneLevels}}
+        <div class="scene-level-strip">
+            <div class="scene-level-strip__summary">
+                <span class="scene-level-strip__count">{{selectedDetail.sceneLevelCount}}</span>
+                <span>{{localize 'origin-vault.scenes.levelsLabel'}}</span>
+            </div>
+            <div class="scene-level-strip__tabs">
+                {{#each selectedDetail.sceneLevels}}
+                <button type="button"
+                    class="scene-level-tab{{#if this.active}} active{{/if}}"
+                    data-level-id="{{this.id}}">
+                    {{this.label}}
+                </button>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
+        {{/if}}
+
+        {{#if previewItem}}
+        <div class="details-preview{{#if (eq selectedDetail.type 'scene')}} scene-preview{{/if}}">
+            <div class="preview-container">
+
+                {{#if (eq selectedDetail.type "scene")}}
+                <div class="scene-canvas-container" data-scene-level-id="{{selectedDetail.activeSceneLevelId}}"></div>
+                {{else if previewItem.thumbnail}}
+                <img src="{{previewItem.thumbnail}}" alt="{{previewItem.displayName}}">
+                {{else}}
+                {{#if (isVideo previewItem.path)}}
+                <video src="{{previewItem.path}}" preload="metadata" muted></video>
+                {{else if (isAudio previewItem.path)}}
+                <div class="audio-details-player">
+                    <div class="ov-waveform-container" data-item-id="{{previewItem.id}}"><canvas
+                            class="ov-waveform-canvas audio-details-waveform"></canvas></div>
+                    <div class="audio-controls">
+                        <button class="btn-audio-play"><i class="fas fa-play"></i></button>
+                        <span class="audio-time">0:00 / {{#if
+                            selectedDetail.formattedDuration}}{{selectedDetail.formattedDuration}}{{else}}--:--{{/if}}</span>
+                    </div>
+                    <audio class="details-audio-el" src="{{previewItem.path}}"></audio>
+                </div>
+                {{else}}
+                <img src="{{previewItem.path}}" alt="{{previewItem.displayName}}">
+                {{/if}}
+                {{/if}}
+                <span
+                    class="file-format-badge{{#if selectedDetail.isImported}} imported{{/if}}">{{selectedDetail.fileFormat}}</span>
+            </div>
+        </div>
+        {{else}}
+
+        <div class="details-preview{{#if (eq selectedDetail.type 'scene')}} scene-preview{{/if}}">
+            <div class="preview-container">
+
+                {{#if (eq selectedDetail.type "scene")}}
+                <div class="scene-canvas-container" data-scene-level-id="{{selectedDetail.activeSceneLevelId}}"></div>
+                {{else if (isVideo selectedDetail.path)}}
+                <video src="{{selectedDetail.path}}" autoplay muted loop></video>
+                {{else if (isAudio selectedDetail.path)}}
+                <div class="audio-details-player">
+                    <div class="ov-waveform-container" data-item-id="{{selectedDetail.id}}">
+                        <canvas class="ov-waveform-canvas audio-details-waveform"></canvas>
+                    </div>
+                    <div class="audio-controls">
+                        <button class="btn-audio-play"><i class="fas fa-play"></i></button>
+                        <span class="audio-time">0:00 / {{#if
+                            selectedDetail.formattedDuration}}{{selectedDetail.formattedDuration}}{{else}}--:--{{/if}}</span>
+                    </div>
+                    <audio class="details-audio-el" src="{{selectedDetail.path}}"></audio>
+                </div>
+                {{else}}
+                <img src="{{selectedDetail.path}}" alt="{{selectedDetail.displayName}}">
+                {{/if}}
+                <span class="file-format-badge">{{selectedDetail.fileFormat}}</span>
+            </div>
+        </div>
+        {{/if}}
+
+        <div class="details-palette">
+            <span class="color-dot" style="background:#554433"></span>
+            <span class="color-dot" style="background:#665544"></span>
+            <span class="color-dot" style="background:#332211"></span>
+            <span class="color-dot" style="background:#887766"></span>
+        </div>
+
+        <div class="details-form">
+            <div class="form-group">
+                <input type="text" class="details-input name-input"
+                    value="{{#if selectedDetail.displayName}}{{selectedDetail.displayName}}{{else}}{{fileName selectedDetail.path}}{{/if}}"
+                    data-field="displayName" data-item-id="{{selectedDetail.id}}">
+            </div>
+            <div class="form-group">
+                <input type="text" class="details-input" placeholder="{{localize 'origin-vault.ui.addNotes'}}"
+                    value="{{selectedDetail.notes}}" data-field="notes" data-item-id="{{selectedDetail.id}}">
+            </div>
+
+            {{#if (eq selectedDetail.type 'item')}}
+            <div class="form-group item-actions" style="margin-top: 12px;">
+
+                {{#if selectedDetail.systemFields}}
+                <div class="item-system-fields" style="margin-bottom: 12px;">
+                    {{#each selectedDetail.systemFields}}
+                    <div class="item-field-row"
+                        style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--ov-border);">
+                        <span style="color: var(--ov-text-muted);">{{this.icon}} {{this.label}}</span>
+                        <span>{{this.value}}</span>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if selectedDetail.enrichedDescription}}
+                <div class="ov-document-description item-description">
+                    {{{selectedDetail.enrichedDescription}}}
+                </div>
+                {{/if}}
+
+                {{#if selectedDetail.uuid}}
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <button class="ov-btn full-width btn-browse-item-sheet" data-item-uuid="{{selectedDetail.uuid}}">
+                        <i class="fas fa-scroll"></i> {{localize 'origin-vault.items.browseItemSheet'}}
+                    </button>
+                    {{#if selectedDetail.isItemImported}}
+                    <button class="ov-btn full-width primary btn-open-world-item"
+                        data-item-uuid="{{selectedDetail.worldItemUuid}}">
+                        <i class="fas fa-edit"></i> {{localize 'origin-vault.items.openWorldItem'}}
+                    </button>
+                    {{else}}
+                    <button class="ov-btn full-width primary btn-import-item-to-world"
+                        data-item-uuid="{{selectedDetail.uuid}}" data-item-id="{{selectedDetail.id}}">
+                        <i class="fas fa-download"></i> {{localize 'origin-vault.items.importToWorld'}}
+                    </button>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+            {{/if}}
+
+            {{#if (eq selectedDetail.type 'actor')}}
+            <div class="form-group actor-actions" style="margin-top: 12px;">
+
+                {{#if selectedDetail.enrichedDescription}}
+                <div class="ov-document-description actor-description">
+                    {{{selectedDetail.enrichedDescription}}}
+                </div>
+                {{/if}}
+
+                {{#if selectedDetail.uuid}}
+                <div class="actor-detail-buttons">
+                    <button class="ov-btn full-width btn-browse-actor-sheet" data-actor-uuid="{{selectedDetail.uuid}}">
+                        <i class="fas fa-address-card"></i> {{localize 'origin-vault.actors.browseActorSheet'}}
+                    </button>
+                    {{#if selectedDetail.isActorImported}}
+                    <button class="ov-btn full-width primary btn-open-world-actor"
+                        data-actor-uuid="{{selectedDetail.worldActorUuid}}">
+                        <i class="fas fa-edit"></i> {{localize 'origin-vault.actors.openWorldActor'}}
+                    </button>
+                    {{else}}
+                    <button class="ov-btn full-width primary btn-import-actor-to-world"
+                        data-actor-uuid="{{selectedDetail.uuid}}" data-actor-id="{{selectedDetail.id}}">
+                        <i class="fas fa-download"></i> {{localize 'origin-vault.actors.importToWorld'}}
+                    </button>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+            {{/if}}
+
+            {{#if (eq selectedDetail.type 'scene')}}
+            <div class="form-group scene-actions" style="margin-top: 12px;">
+                {{#if selectedDetail.isImported}}
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <button class="ov-btn flex-1 btn-view-scene" data-scene-id="{{selectedDetail.worldId}}">
+                        <i class="fas fa-eye"></i> {{localize 'origin-vault.scenes.viewScene'}}
+                    </button>
+                    <button class="ov-btn flex-1 primary btn-activate-scene" data-scene-id="{{selectedDetail.worldId}}">
+                        <i class="fas fa-play"></i> {{localize 'origin-vault.scenes.activateScene'}}
+                    </button>
+                </div>
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <button class="ov-btn flex-1 btn-configure-scene" data-scene-id="{{selectedDetail.worldId}}">
+                        <i class="fas fa-cog"></i> {{localize 'origin-vault.scenes.configureScene'}}
+                    </button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="ov-btn flex-1 btn-import-scene secondary"
+                        title="{{localize 'origin-vault.scenes.reimport'}}">
+                        <i class="fas fa-sync"></i> {{localize 'origin-vault.scenes.reimport'}}
+                    </button>
+                    <button class="ov-btn flex-1 danger btn-delete-scene" data-scene-id="{{selectedDetail.worldId}}">
+                        <i class="fas fa-trash"></i> {{localize 'origin-vault.scenes.deleteFromWorld'}}
+                    </button>
+                </div>
+                {{else}}
+                <button class="ov-btn full-width primary btn-import-scene">
+                    <i class="fas fa-file-import"></i> {{localize 'origin-vault.scenes.importScene'}}
+                </button>
+                {{/if}}
+            </div>
+            {{/if}}
+
+            {{#unless (eq selectedDetail.type 'scene')}}
+            {{#unless (eq selectedDetail.type 'item')}}
+            {{#unless (eq selectedDetail.type 'actor')}}
+            {{#unless (isAudio selectedDetail.path)}}
+            <div class="form-group" style="margin-top: 8px;">
+                <button class="ov-btn full-width btn-create-scene-from-asset" data-item-id="{{selectedDetail.id}}">
+                    <i class="fas fa-map-marked-alt"></i> {{localize 'origin-vault.scenes.createFromImage'}}
+                </button>
+            </div>
+            <div class="form-group" style="margin-top: 8px;">
+                <button class="ov-btn full-width btn-create-actor-from-asset" data-item-id="{{selectedDetail.id}}">
+                    <i class="fas fa-user-plus"></i> {{localize 'origin-vault.actors.createFromImage'}}
+                </button>
+            </div>
+            {{/unless}}
+            {{/unless}}
+            {{/unless}}
+            {{/unless}}
+
+            {{#if (isAudio selectedDetail.path)}}
+            <div class="form-group audio-actions" style="margin-top: 8px;">
+                <button class="ov-btn full-width primary btn-add-to-playlist" data-item-id="{{selectedDetail.id}}">
+                    <i class="fas fa-music"></i> {{localize 'origin-vault.playlist.addToPlaylist'}}
+                </button>
+            </div>
+            {{/if}}
+
+            <div class="form-group tags-group">
+                <label>{{localize 'origin-vault.tags.title'}}</label>
+                <div class="tags-input-container">
+                    <button class="btn-add-tag"><i class="fas fa-plus"></i> {{localize
+                        'origin-vault.tags.addTag'}}</button>
+                    {{#each selectedDetail.tags}}
+                    <span class="detail-tag" data-tag-id="{{this.id}}"
+                        style="border-left: 3px solid {{this.color}}; padding-left: 6px;">
+                        {{this.name}} <i class="fas fa-times btn-remove-tag"></i>
+                    </span>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="form-group folder-group">
+                <label>{{localize 'origin-vault.folders.subfolders'}}</label>
+                <div class="tags-input-container folders-container">
+                    {{#each selectedDetail.folderList}}
+                    <div class="folder-badge" data-folder-id="{{id}}" style="border-left: 3px solid {{color}};"
+                        title="{{name}}">
+                        <span class="folder-badge-name">{{name}}</span>
+                        {{#unless isRoot}}
+                        {{#unless ../isSmartFolderView}}
+                        <i class="fas fa-times btn-remove-from-folder"
+                            title="{{localize 'origin-vault.ui.removeFromFolder'}}"></i>
+                        {{/unless}}
+                        {{/unless}}
+                    </div>
+                    {{/each}}
+                    <button class="btn-add-to-folder" title="{{localize 'origin-vault.ui.addToFolderCopy'}}">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="basic-info">
+                <h4>{{localize 'origin-vault.ui.basicInfo'}}</h4>
+                <div class="info-row">
+                    <span class="label">{{localize 'origin-vault.ui.rating'}}</span>
+                    <span class="value stars">
+                        {{#each selectedDetail.stars}}
+                        <i class="fas fa-star {{#if this.filled}}active{{/if}}" data-rating="{{this.value}}"
+                            style="cursor: pointer; color: {{#if this.filled}}#ffb400{{else}}#444{{/if}};"></i>
+                        {{/each}}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">{{localize 'origin-vault.ui.format'}}</span>
+                    <span class="value">{{selectedDetail.fileFormat}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">{{localize 'origin-vault.ui.addedDate'}}</span>
+                    <span class="value">{{selectedDetail.formattedAddedDate}}</span>
+                </div>
+                {{#unless (eq selectedDetail.type 'scene')}}
+                {{#unless (eq selectedDetail.type 'item')}}
+                {{#unless (eq selectedDetail.type 'actor')}}
+                {{#if selectedDetail.path}}
+                <div class="info-row file-path-row">
+                    <span class="label">{{localize 'origin-vault.ui.filePath'}}</span>
+                    <span class="value file-path-value"
+                        title="{{selectedDetail.decodedPath}}">{{selectedDetail.decodedPath}}</span>
+                </div>
+                {{/if}}
+                {{/unless}}
+                {{/unless}}
+                {{/unless}}
+            </div>
+
+        </div>
+
+        {{else}}
+
+        <div class="folder-details">
+            <div class="folder-icon-large">
+                <i class="fas fa-folder-open"></i>
+            </div>
+            <h3 class="folder-name-display">{{currentFolderName}}</h3>
+            <div class="folder-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{currentFolderItemCount}}</span>
+                    <span class="stat-label">{{localize 'origin-vault.ui.assets'}}</span>
+                </div>
+            </div>
+            <p class="folder-hint">{{localize 'origin-vault.ui.selectToView'}}</p>
+        </div>
+        {{/if}}
+    </div>
+    {{/if}}

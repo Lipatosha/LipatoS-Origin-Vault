@@ -1,0 +1,70 @@
+<div class="scene-browser-header">
+    <span class="browser-title">👤 {{localize 'origin-vault.actors.browserTitle'}}</span>
+    <button class="btn-close-actor-browser"><i class="fas fa-times"></i></button>
+</div>
+<div class="scene-browser-content">
+
+    <div class="scene-browser-hint">
+        {{localize 'origin-vault.actors.selectPackHint'}}
+    </div>
+    {{> compendium-batch-bar}}
+    <div class="compendium-pack-list item-pack-entry-list actor-pack-entry-list">
+        {{#each actorPackEntries}}
+            <div class="item-pack-group {{#if this.collapsed}}collapsed{{/if}}" data-group-key="{{this.key}}">
+                <input type="checkbox" class="compendium-batch-group-checkbox" data-group-key="{{this.key}}"
+                    title="{{localize 'origin-vault.batchImport.selectSource'}}" {{#if this.allSelected}}checked{{/if}}>
+                <button type="button"
+                    class="item-pack-group-header"
+                    data-group-key="{{this.key}}"
+                    aria-expanded="{{#if this.collapsed}}false{{else}}true{{/if}}">
+                    <span class="item-pack-group-main">
+                        <i class="fas fa-chevron-down item-pack-group-chevron"></i>
+                        <i class="{{this.sourceIconClass}} item-pack-group-icon"></i>
+                        <span class="item-pack-group-titles">
+                            <span class="item-pack-group-name">{{this.name}}</span>
+                            {{#if this.sourceId}}
+                            <span class="item-pack-group-id" title="{{this.sourceId}}">{{this.sourceId}}</span>
+                            {{/if}}
+                        </span>
+                    </span>
+                    <span class="item-pack-group-meta">
+                        <span class="item-pack-group-meta-chip">
+                            <i class="fas fa-layer-group"></i>
+                            <span>{{this.packCount}}</span>
+                        </span>
+                        <span class="item-pack-group-meta-chip">
+                            <i class="fas fa-users"></i>
+                            <span>{{this.totalCount}} {{localize 'origin-vault.actors.actorsCount'}}</span>
+                        </span>
+                    </span>
+                </button>
+
+                <div class="item-pack-group-body">
+                    {{#each this.packs}}
+                    <div class="compendium-pack-item actor-pack-item {{#if this.selected}}batch-selected{{/if}}" data-pack-id="{{this.id}}">
+                        <input type="checkbox" class="compendium-batch-pack-checkbox" data-pack-id="{{this.id}}"
+                            title="{{localize 'origin-vault.batchImport.selectPack'}}" {{#if this.selected}}checked{{/if}}>
+                        <span class="compendium-batch-order" aria-hidden="true"></span>
+                        <div class="pack-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="pack-info">
+                            <div class="pack-name">{{this.name}}</div>
+                            <div class="pack-meta">{{this.count}} {{localize 'origin-vault.actors.actorsCount'}}</div>
+                            <div class="pack-id" title="{{this.id}}">{{this.id}}</div>
+                        </div>
+                        <button class="btn-import-actor-pack" data-pack-id="{{this.id}}"
+                            title="{{localize 'origin-vault.actors.importPack'}}">
+                            <i class="fas fa-file-import"></i>
+                        </button>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+        {{else}}
+        <div class="no-packs-message">
+            {{localize 'origin-vault.actors.noPacksFound'}}
+        </div>
+        {{/each}}
+    </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="compendium-batch-bar {{#if compendiumBatch.running}}is-running{{/if}}">
+    <div class="compendium-batch-summary">
+        <span class="compendium-batch-count">
+            {{localize 'origin-vault.batchImport.selectedCount' count=compendiumBatch.selectedCount}}
+        </span>
+        <span class="compendium-batch-status">
+            {{#if compendiumBatch.running}}
+            {{localize 'origin-vault.batchImport.progress' current=compendiumBatch.current total=compendiumBatch.total name=compendiumBatch.currentName}}
+            {{else}}
+            {{localize 'origin-vault.batchImport.orderHint'}}
+            {{/if}}
+        </span>
+    </div>
+    <div class="compendium-batch-actions">
+        <button type="button" class="btn-clear-compendium-batch" {{#unless compendiumBatch.hasSelection}}disabled{{/unless}}
+            title="{{localize 'origin-vault.batchImport.clear'}}">
+            <i class="fas fa-eraser"></i>
+        </button>
+        <button type="button" class="btn-start-compendium-batch" {{#unless compendiumBatch.hasSelection}}disabled{{/unless}}>
+            <i class="fas {{#if compendiumBatch.running}}fa-spinner fa-spin{{else}}fa-play{{/if}}"></i>
+            {{localize 'origin-vault.batchImport.start'}}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+<div class="origin-vault-container" tabindex="0">
+
+  <div class="ov-header">
+    <div class="ov-header-left">
+      <i class="fas fa-vault"></i>
+      <h4 class="ov-header-title">Origin Vault</h4>
+    </div>
+    <div class="ov-header-right">
+      <button class="ov-header-btn btn-comparison" type="button" title="{{localize 'origin-vault.comparison.title'}}" aria-label="{{localize 'origin-vault.comparison.title'}}" aria-expanded="false" aria-controls="ov-comparison-panel" aria-haspopup="dialog">
+        <i class="fas fa-columns"></i>
+        <span class="ov-compare-count" hidden></span>
+      </button>
+      <button class="ov-header-btn btn-help" title="{{localize 'origin-vault.toolbar.help'}}">
+        <i class="fas fa-question-circle"></i>
+      </button>
+      <button class="ov-header-btn btn-library-manager" title="{{localize 'origin-vault.toolbar.manageLibrary'}}">
+        <i class="fas fa-database"></i>
+      </button>
+      <button class="ov-header-btn btn-tag-manager" title="{{localize 'origin-vault.toolbar.manageTags'}}">
+        <i class="fas fa-tags"></i>
+      </button>
+      <button class="ov-header-btn btn-toggle-window" title="{{localize 'origin-vault.toolbar.toggleWindow'}}">
+        <i class="fas {{#if isWindowed}}fa-expand{{else}}fa-compress-arrows-alt{{/if}}"></i>
+      </button>
+      <button class="ov-header-close" title="{{localize 'origin-vault.toolbar.close'}}">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="ov-body">
+
+    <div class="sidebar" id="ov-sidebar">
+      {{> sidebar}}
+    </div>
+
+    <div class="ov-resize-divider" data-resize="sidebar"></div>
+
+    <div class="main-content" id="ov-main-content">
+      {{> asset-grid}}
+    </div>
+
+    <div class="ov-resize-divider ov-resize-divider--right" data-resize="right-panel"></div>
+
+    <div class="{{#if browserVisible}}browser-panel{{else}}details-panel{{/if}} right-panel" id="ov-right-panel">
+      {{> details-panel}}
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-left">
+      {{#if selectedItems.length}}
+      <span>{{localize 'origin-vault.status.selected' count=selectedItems.length}}</span>
+      {{else}}
+      <span>{{localize 'origin-vault.status.total' count=stats.totalItems}}</span>
+      {{/if}}
+    </div>
+    <div class="status-right">
+      <span>{{localize 'origin-vault.status.folders' count=stats.totalFolders}}</span>
+    </div>
+  </div>
+</div>

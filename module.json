@@ -1,0 +1,62 @@
+{
+  "id": "origin-vault",
+  "title": "LipatoS — Origin Vault",
+  "description": "Полностью русифицированная библиотека ресурсов для Foundry VTT: виртуальные папки, метки, поиск, предпросмотр, управление сценами, предметами и персонажами, загрузка и импорт.",
+  "version": "2.8.2",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 14,
+    "maximum": 14
+  },
+  "authors": [
+    {
+      "name": "Reslin",
+      "flags": {}
+    },
+    {
+      "name": "LipatoS",
+      "url": "https://github.com/Lipatosha"
+    }
+  ],
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/origin-vault.css",
+    "styles/sidebar.css",
+    "styles/sidebar-dock.css",
+    "styles/grid.css",
+    "styles/details.css",
+    "styles/preview.css",
+    "styles/dialogs.css",
+    "styles/scenes.css",
+    "styles/audio-player.css",
+    "styles/module.css",
+    "styles/store.css",
+    "styles/comparison.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "cn",
+      "name": "简体中文",
+      "path": "lang/cn.json"
+    },
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
+    }
+  ],
+  "socket": false,
+  "manifest": "https://github.com/Lipatosha/LipatoS-Origin-Vault/releases/latest/download/module.json",
+  "flags": {},
+  "url": "https://github.com/Lipatosha/LipatoS-Origin-Vault",
+  "download": "https://github.com/Lipatosha/LipatoS-Origin-Vault/releases/latest/download/lipatos-origin-vault.zip",
+  "readme": "https://github.com/Lipatosha/LipatoS-Origin-Vault/blob/main/README.md",
+  "bugs": "https://github.com/Lipatosha/LipatoS-Origin-Vault/issues"
+}

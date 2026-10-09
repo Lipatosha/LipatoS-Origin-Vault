@@ -1,0 +1,84 @@
+<div class="scene-browser-header">
+    <span class="browser-title">📦 {{localize 'origin-vault.scenes.browserTitle'}}</span>
+    <button class="btn-close-scene-browser"><i class="fas fa-times"></i></button>
+</div>
+<div class="scene-browser-content">
+
+    <div class="scene-browser-primary-action">
+        <button class="ov-btn full-width btn-create-blank-scene">
+            <i class="fas fa-plus"></i> {{localize 'origin-vault.scenes.createBlank'}}
+        </button>
+    </div>
+
+    {{#if worldScenes.length}}
+    <div class="world-scenes-section">
+        <div class="section-title">
+            <i class="fas fa-globe"></i>
+            {{localize 'origin-vault.scenes.worldScenes'}}
+            <span class="section-count">({{worldScenes.length}})</span>
+        </div>
+        <div class="world-scene-list">
+            {{#each worldScenes}}
+            <div class="world-scene-item {{#if this.isViewing}}viewing{{/if}} {{#if this.isActive}}active{{/if}}"
+                data-scene-id="{{this.id}}">
+                <div class="world-scene-thumb">
+                    {{#if this.thumb}}
+                    <img src="{{this.thumb}}" alt="{{this.name}}" loading="lazy">
+                    {{else}}
+                    <i class="fas fa-map"></i>
+                    {{/if}}
+                </div>
+                <div class="world-scene-info">
+                    <div class="world-scene-name">{{this.name}}</div>
+                    <div class="world-scene-status">
+                        {{#if this.isViewing}}<span class="status-badge viewing"><i
+                                class="fas fa-eye"></i></span>{{/if}}
+                        {{#if this.isActive}}<span class="status-badge active"><i class="fas fa-play"></i></span>{{/if}}
+                    </div>
+                </div>
+                {{#if this.isCollected}}
+                <span class="btn-collected" title="{{localize 'origin-vault.scenes.alreadyCollected'}}">
+                    <i class="fas fa-check"></i>
+                </span>
+                {{else}}
+                <button class="btn-collect-scene" data-scene-id="{{this.id}}"
+                    title="{{localize 'origin-vault.scenes.collectToLibrary'}}">
+                    <i class="fas fa-plus"></i>
+                </button>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    <div class="scene-browser-hint">
+        {{localize 'origin-vault.scenes.selectPackHint'}}
+    </div>
+    {{> compendium-batch-bar}}
+    <div class="compendium-pack-list">
+        {{#each scenePacks}}
+        <div class="compendium-pack-item {{#if this.isImported}}imported{{/if}} {{#if this.selected}}batch-selected{{/if}}" data-pack-id="{{this.id}}">
+            <input type="checkbox" class="compendium-batch-pack-checkbox" data-pack-id="{{this.id}}"
+                title="{{localize 'origin-vault.batchImport.selectPack'}}" {{#if this.selected}}checked{{/if}}>
+            <span class="compendium-batch-order" aria-hidden="true"></span>
+            <div class="pack-icon">
+                <i class="fas fa-atlas"></i>
+            </div>
+            <div class="pack-info">
+                <div class="pack-name">{{this.name}}</div>
+                <div class="pack-meta">{{this.count}} {{localize 'origin-vault.scenes.scenesCount'}}</div>
+                <div class="pack-id" title="{{this.id}}">{{this.id}}</div>
+            </div>
+            <button class="btn-import-pack" data-pack-id="{{this.id}}"
+                title="{{localize 'origin-vault.scenes.importPack'}}">
+                <i class="fas fa-file-import"></i>
+            </button>
+        </div>
+        {{else}}
+        <div class="no-packs-message">
+            {{localize 'origin-vault.scenes.noPacksFound'}}
+        </div>
+        {{/each}}
+    </div>
+</div>

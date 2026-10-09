@@ -1,0 +1,27 @@
+<div class="sora-subfolder-config">
+    <p>{{{localize 'origin-vault.ui.subfolderConfigDesc' name=categoryName}}}</p>
+    <div class="subfolder-list">
+        {{#each subfolders}}
+        <div class="subfolder-row" data-path="{{this.path}}">
+            <div class="subfolder-info">
+                <i class="fas {{#if this.isVirtual}}fa-folder-plus{{else}}fa-folder{{/if}} fa-fw"></i>
+                <span class="path-name" title="{{this.path}}">{{this.name}}</span>
+            </div>
+            <div class="alias-group">
+                <label>{{localize 'origin-vault.ui.showAlias'}}</label>
+                <input type="text" name="alias" value="{{this.alias}}"
+                    placeholder="{{localize 'origin-vault.ui.aliasPlaceholder'}}">
+            </div>
+            {{#if this.isVirtual}}
+            <button type="button" class="delete-virtual-folder"
+                title="{{localize 'origin-vault.ui.deleteVirtualFolder'}}"><i class="fas fa-trash"></i></button>
+            {{/if}}
+        </div>
+        {{/each}}
+        {{#unless subfolders}}
+        <p class="empty">{{localize 'origin-vault.ui.noSubfolders'}}</p>
+        {{/unless}}
+    </div>
+    <button class="add-virtual-folder"><i class="fas fa-plus-circle"></i> {{localize
+        'origin-vault.ui.createVirtualFolder'}}</button>
+</div>

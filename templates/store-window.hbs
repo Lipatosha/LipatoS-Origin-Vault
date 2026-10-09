@@ -1,0 +1,57 @@
+<div class="ov-store-container">
+
+    <div class="ov-store-content">
+        {{#if loading}}
+        <div class="ov-loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>{{localize 'origin-vault.store.loading'}}</span>
+        </div>
+        {{else}}
+        <div class="ov-store-grid">
+            {{#each packages}}
+            <div class="ov-store-card {{#if installed}}installed{{/if}}" data-id="{{id}}">
+                <div class="card-thumbnail">
+                    <img src="{{thumbnail}}" alt="{{title}}">
+                    {{#if installed}}
+                    <div class="status-badge installed">
+                        <i class="fas fa-check"></i> {{localize 'origin-vault.store.status.installed'}}
+                    </div>
+                    {{else}}
+                    {{#if isNew}}
+                    <div class="status-badge new">{{localize 'origin-vault.store.status.new'}}</div>
+                    {{/if}}
+                    {{/if}}
+                </div>
+
+                <div class="card-body">
+                    <h3 class="card-title" title="{{title}}">{{title}}</h3>
+                    <div class="card-meta">
+                        <span class="version">v{{version}}</span>
+                        <span class="size">{{size}}</span>
+                    </div>
+                    <p class="card-desc">{{description}}</p>
+                </div>
+
+                <div class="card-footer">
+                    {{#if installed}}
+                    {{#if enabled}}
+                    <button class="ov-btn ov-btn-secondary" disabled>
+                        <i class="fas fa-check-circle"></i> {{localize 'origin-vault.store.action.active'}}
+                    </button>
+                    {{else}}
+                    <button class="ov-btn ov-btn-primary" data-action="enablePackage" data-package-id="{{id}}">
+                        <i class="fas fa-power-off"></i> {{localize 'origin-vault.store.action.enable'}}
+                    </button>
+                    {{/if}}
+                    {{else}}
+                    <button class="ov-btn ov-btn-primary" data-action="installPackage" data-package-id="{{id}}">
+                        <i class="fas fa-download"></i> {{localize 'origin-vault.store.action.get'}}
+                    </button>
+                    {{/if}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+    </div>
+</div>

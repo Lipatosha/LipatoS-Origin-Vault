@@ -1,0 +1,78 @@
+<div class="webm-viewer-reforged">
+  <div class="toolbar">
+
+    <div class="toolbar-group nav-group">
+      <button data-action="overview" class="{{#if isOverview}}active{{/if}}"><i class="fas fa-home"></i> {{localize
+        'origin-vault.ui.overview'}}</button>
+      <div class="dropdown category-dropdown">
+        <button class="dropdown-toggle {{#if activeCategoryKey}}active{{/if}}" data-action="toggle-category-dropdown">
+          <i class="fas fa-folder"></i>
+          <span>{{activeCategoryName}}</span>
+          <i class="fas fa-caret-down"></i>
+        </button>
+        <div class="dropdown-menu">
+          {{#each categories as |cat|}}
+          <a class="dropdown-item" data-action="category" data-key="{{cat.key}}">{{cat.name}}</a>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar-spacer"></div>
+
+    <div class="toolbar-group nav-group">
+      <button data-action="favorites" class="{{#if isFavorites}}active{{/if}}"><i class="fas fa-star"></i> {{localize
+        'origin-vault.folders.favorites'}}</button>
+      <button data-action="presets" class="{{#if isPresets}}active{{/if}}"><i class="fas fa-clone"></i> {{localize
+        'origin-vault.ui.presets'}}</button>
+    </div>
+    <div class="toolbar-group tools-group">
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" name="search" placeholder="{{localize 'origin-vault.search.placeholder'}}"
+          value="{{searchQuery}}">
+      </div>
+      <button data-action="filter-media">
+        <i
+          class="fas {{#if (eq mediaFilterMode 'img')}}fa-image{{else if (eq mediaFilterMode 'vid')}}fa-film{{else}}fa-filter{{/if}}"></i>
+        <span>{{filterLabel}}</span>
+      </button>
+      <button data-action="add-file-current" title="{{localize 'origin-vault.ui.addToCategory'}}" {{#unless
+        canAddCurrent}}disabled{{/unless}}>
+        <i class="fas fa-plus"></i>
+      </button>
+      <button data-action="open-cat-config" title="{{localize 'origin-vault.ui.categorySettings'}}"><i
+          class="fas fa-cog"></i></button>
+      <button data-action="clear" class="danger" title="{{localize 'origin-vault.ui.clearAllAnimations'}}"><i
+          class="fas fa-ban"></i></button>
+    </div>
+  </div>
+
+  <div id="sequencer-webm-orb-host">
+
+    <div class="now-playing-container {{#if isNowPlayingExpanded}}expanded{{/if}}">
+      <div class="np-header" data-action="toggle-now-playing">
+        <div class="np-title">
+          <i class="fas fa-play-circle"></i> {{localize 'origin-vault.ui.playing'}}
+          <span class="count">{{activeEffectsCount}}</span>
+        </div>
+        <div class="np-toggle-icon">
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+      <div class="np-body">
+
+      </div>
+    </div>
+
+    <div class="main-panel-scroller">
+      {{#if loading}}
+      <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> {{localize 'origin-vault.ui.loading'}}</div>
+      {{else}}
+      <div class="grid"></div>
+      <div id="orb-fav-panel" style="display:none;"></div>
+      <div id="orb-pre-panel" style="display:none;"></div>
+      {{/if}}
+    </div>
+  </div>
+</div>

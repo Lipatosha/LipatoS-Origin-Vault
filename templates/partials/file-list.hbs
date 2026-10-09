@@ -1,0 +1,13 @@
+{{#each files}}
+<div class="webm-item {{#if this.isFavorite}}is-favorite{{/if}}" data-path="{{this.path}}" title="{{displayNameFor this.path}}&#10;{{this.path}}" draggable="true">
+    <div class="thumb" style="background-color: {{getPreviewBgColor}};" data-src="{{this.path}}">
+        <div class="spinner"></div>
+        {{#if (isVideo this.path)}}
+        <video class="preview" muted loop preload="none"></video>
+        {{else}}
+        <img class="preview" loading="lazy" draggable="false">
+        {{/if}}
+    </div>
+    <div class="label">{{displayNameFor this.path}}</div>
+</div>
+{{/each}}

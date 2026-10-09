@@ -1,0 +1,129 @@
+<div class="sora-placer-app">
+
+    <div class="side-panel">
+        <div class="side-panel-scroller">
+
+            <div class="mode-selector">
+                <div class="dropdown">
+                    <button class="mode-button" data-action="toggle-category-dropdown">
+                        <span>{{#if isFavorites}}{{localize "origin-vault.folders.favorites"}}{{else}}{{activeCategoryName}}{{/if}}</span>
+                        <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" data-action="favorites"><i class="fas fa-star fa-fw"></i> {{localize "origin-vault.folders.favorites"}}</a>
+                        <div class="dropdown-divider"></div>
+                        {{#each categories}}
+                        <a class="dropdown-item {{#if this.isActive}}active{{/if}}" data-action="category" data-key="{{this.key}}">{{this.name}}</a>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+            {{#if isCategoryView}}
+            <div class="subfolder-controls">
+                <div class="dropdown subfolder-dropdown">
+                    <button class="mode-button" data-action="toggle-subfolder-dropdown">
+                        <span>{{activeSubfolderName}}</span>
+                        <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        {{#each subfolders}}
+                        <a class="dropdown-item" data-action="select-subfolder" data-key="{{this.key}}">
+                            <i class="fas {{#if this.isVirtual}}fa-magic{{else}}fa-folder{{/if}} fa-fw"></i>
+                            <span>{{this.name}}</span>
+                            <i class="fas fa-edit rename-subfolder" title="{{localize "origin-vault.ui.rename"}}" data-cat-key="{{../activeCategoryKey}}" data-subfolder-key="{{this.key}}"></i>
+                            {{#if this.isVirtual}}
+                            <i class="fas fa-trash delete-subfolder" title="{{localize "origin-vault.ui.delete"}}" data-cat-key="{{../activeCategoryKey}}" data-subfolder-key="{{this.key}}"></i>
+                            {{/if}}
+                        </a>
+                        {{/each}}
+                    </div>
+                </div>
+                <button class="add-subfolder-button" data-action="create-virtual-subfolder" title="{{localize "origin-vault.ui.createVirtualFolder"}}"><i class="fas fa-plus"></i></button>
+            </div>
+            {{/if}}
+
+            {{#if isFavorites}}
+            <div class="favorites-list">
+                {{#each favoritesList}}
+                <div class="side-item {{#if this.isActive}}active{{/if}}" data-name="{{this.name}}"><i class="fas fa-folder fa-fw"></i> {{this.name}}</div>
+                {{/each}}
+                {{#unless favoritesList}}
+                <div class="side-item-placeholder">{{localize "origin-vault.folders.new"}}</div>
+                {{/unless}}
+            </div>
+            {{/if}}
+
+            <div class="side-panel-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" value="{{searchQuery}}" placeholder="{{localize "origin-vault.search.placeholder"}}" autocomplete="off">
+                </div>
+                <div class="controls-grid">
+                    <button data-action="toggle-placement" title="{{localize "origin-vault.settings.placement"}} ({{placementMode}})">
+                        {{#if (eq placementMode 'tile')}}<i class="fas fa-layer-group"></i> {{localize "origin-vault.settings.tile"}}{{else}}<i class="fas fa-user"></i> {{localize "origin-vault.settings.token"}}{{/if}}
+                    </button>
+                    <button data-action="toggle-autoplay" class="{{#if autoplay}}active{{/if}}" title="{{localize "origin-vault.settings.autoplayVideos"}}">
+                        <i class="fas fa-sync-alt"></i> {{localize "origin-vault.settings.autoplayVideos"}}
+                    </button>
+                    <div class="scale-control">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        <input type="range" name="scale" min="0.1" max="5" step="0.05" value="{{placementScale}}">
+                        <span class="scale-value">{{toFixed placementScale 2}}x</span>
+                    </div>
+                    <button data-action="open-cat-config" title="{{localize "origin-vault.settings.title"}}"><i class="fas fa-cog"></i> {{localize "origin-vault.settings.title"}}</button>
+                </div>
+            </div>
+        </div>
+
+        {{#if isFavorites}}
+        <div class="side-panel-footer">
+            <button data-fav-action="create" title="{{localize "origin-vault.folders.new"}}"><i class="fas fa-plus"></i></button>
+            <button data-fav-action="rename" title="{{localize "origin-vault.ui.rename"}}"><i class="fas fa-edit"></i></button>
+            <button data-fav-action="delete" title="{{localize "origin-vault.ui.delete"}}"><i class="fas fa-trash"></i></button>
+        </div>
+        {{/if}}
+    </div>
+
+    <div class="main-panel">
+        <div class="main-panel-scroller">
+            {{#if loading}}
+            <div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> {{localize "origin-vault.ui.loading"}}</div>
+            {{else}}
+            <div class="grid">
+                {{#each filteredFiles}}
+                <div class="webm-item {{#if this.isFavorite}}is-favorite{{/if}}" data-path="{{this.path}}" title="{{this.path}}" draggable="true">
+                    <div class="thumb" style="background-color: {{getPreviewBgColor}};" data-src="{{this.path}}">
+                        <div class="spinner"></div>
+                        {{#if (isVideo this.path)}}
+                        <video class="preview" muted loop preload="none"></video>
+                        {{else}}
+                        <img class="preview" loading="lazy" draggable="false">
+                        {{/if}}
+                    </div>
+                    <div class="label">{{displayNameFor this.path}}</div>
+                </div>
+                {{/each}}
+
+                {{#unless filteredFiles}}
+                <div class="empty-placeholder">
+                    {{localize "origin-vault.empty.folder"}}
+                </div>
+                {{/unless}}
+            </div>
+
+            {{#if (and isCategoryView nextSubfolderKey)}}
+            <div class="folder-navigation-container">
+                <button class="folder-nav-btn" data-action="select-subfolder" data-key="{{previousSubfolderKey}}">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="folder-nav-btn" data-action="select-subfolder" data-key="{{nextSubfolderKey}}">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            {{/if}}
+
+            {{/if}}
+        </div>
+    </div>
+</div>

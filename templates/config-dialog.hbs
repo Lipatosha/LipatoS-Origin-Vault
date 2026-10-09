@@ -1,0 +1,73 @@
+<form autocomplete="off">
+    <div class="sora-config-rows">
+        {{#each categories}}
+        <div class="form-group cat-row" data-key="{{this.key}}">
+            <div class="row-controls">
+                <button type="button" class="delete-category"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="row-content">
+                <div class="form-fields">
+                    <label>{{localize "origin-vault.ui.category"}}</label>
+                    <input type="text" name="name" value="{{this.name}}">
+                </div>
+                <div class="form-fields">
+                    <label>{{localize "origin-vault.ui.source"}}</label>
+                    <select name="source">
+                        {{#each ../sources}}
+                        <option value="{{this.key}}" {{#if (eq this.key ../../this.source)}}selected{{/if}}>{{this.label}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-fields folder-path">
+                    <label>{{localize "origin-vault.ui.folder"}}</label>
+                    <input type="text" name="folder" value="{{this.folder}}">
+                    <button type="button" class="browse-folder"><i class="fas fa-folder-open"></i></button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+        {{#if isPartial}}
+
+        <div class="form-group cat-row">
+             <div class="row-controls">
+                <button type="button" class="delete-category"><i class="fas fa-trash"></i></button>
+            </div>
+            <div class="row-content">
+                <div class="form-fields">
+                    <label>{{localize "origin-vault.ui.category"}}</label>
+                    <input type="text" name="name" value="{{this.name}}">
+                </div>
+                <div class="form-fields">
+                    <label>{{localize "origin-vault.ui.source"}}</label>
+                    <select name="source">
+                        {{#each ../sources}}
+                        <option value="{{this.key}}" {{#if (eq this.key ../../this.source)}}selected{{/if}}>{{this.label}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-fields folder-path">
+                    <label>{{localize "origin-vault.ui.folder"}}</label>
+                    <input type="text" name="folder" value="{{this.folder}}">
+                    <button type="button" class="browse-folder"><i class="fas fa-folder-open"></i></button>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+    <div class="dialog-buttons">
+        <button type="button" class="add-category"><i class="fas fa-plus"></i> {{localize "origin-vault.ui.category"}}</button>
+    </div>
+</form>
+
+<style>
+.sora-config-dialog .dialog-content { padding: 8px; }
+.sora-config-rows { display: flex; flex-direction: column; gap: 12px; }
+.cat-row { display: flex; align-items: flex-start; gap: 8px; border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 4px; }
+.cat-row .row-controls { flex-shrink: 0; padding-top: 24px; }
+.cat-row .row-content { flex-grow: 1; display: flex; flex-direction: column; gap: 4px; }
+.cat-row .form-fields { display: flex; flex-direction: column; gap: 2px; }
+.cat-row .form-fields.folder-path { position: relative; }
+.cat-row .form-fields.folder-path input { padding-right: 32px; }
+.cat-row .form-fields.folder-path .browse-folder { position: absolute; right: 2px; top: 21px; height: 28px; width: 28px; }
+.sora-config-dialog .dialog-buttons { margin-top: 12px; }
+</style>

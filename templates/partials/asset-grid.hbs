@@ -1,0 +1,300 @@
+{{#if previewItem}}
+
+<div class="preview-mode"
+    data-preview-type="{{#if (isScene previewItem)}}scene{{else if (isItem previewItem)}}item{{else if (isActor previewItem)}}actor{{else}}media{{/if}}">
+
+    <div class="preview-toolbar">
+        <div class="toolbar-left">
+            <button type="button" class="btn-back-grid" title="{{localize 'origin-vault.ui.back'}}">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+
+        </div>
+
+        {{#unless (isScene previewItem)}}
+        {{#unless (isItem previewItem)}}
+        {{#unless (isActor previewItem)}}
+        {{#unless (isVideo previewItem.path)}}
+        {{#unless (isAudio previewItem.path)}}
+        <div class="toolbar-center">
+            <div class="zoom-controls">
+                <button class="btn-zoom-out"><i class="fas fa-minus"></i></button>
+                <input type="range" class="zoom-slider" min="10" max="500" value="100">
+                <button class="btn-zoom-in"><i class="fas fa-plus"></i></button>
+                <span class="zoom-percentage">100%</span>
+            </div>
+        </div>
+
+        <div class="toolbar-right">
+            <button class="btn-rotate-left" title="{{localize 'origin-vault.ui.rotateLeft'}}"><i
+                    class="fas fa-undo"></i></button>
+            <button class="btn-rotate-right" title="{{localize 'origin-vault.ui.rotateRight'}}"><i
+                    class="fas fa-redo"></i></button>
+            <div class="divider"></div>
+            <button class="btn-fit-screen active" title="{{localize 'origin-vault.ui.fitScreen'}}"><i
+                    class="fas fa-compress"></i></button>
+            <button class="btn-original-size" title="{{localize 'origin-vault.ui.originalSize'}}"><i
+                    class="fas fa-expand"></i></button>
+        </div>
+        {{/unless}}
+        {{/unless}}
+        {{/unless}}
+        {{/unless}}
+        {{/unless}}
+    </div>
+
+    <div class="preview-container">
+        <div class="preview-content-wrapper">
+
+            {{#if (isScene previewItem)}}
+            <div class="scene-preview-container" data-scene-uuid="{{previewItem.metadata.uuid}}"
+                style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #1a1a2e;">
+                <div class="scene-canvas-container" style="width: 100%; height: 100%;"></div>
+
+            </div>
+            {{#if selectedDetail.showScenePreviewLevelControl}}
+            <div class="ov-scene-preview-level-controls" aria-label="{{localize 'origin-vault.scenes.previewLevel'}}">
+                <button type="button"
+                    class="ov-scene-preview-level-btn btn-scene-preview-level-step"
+                    data-level-step="1"
+                    title="{{localize 'origin-vault.scenes.previewLevelUp'}}">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <button type="button"
+                    class="ov-scene-preview-level-btn btn-scene-preview-overview"
+                    title="{{localize 'origin-vault.scenes.levelOverview'}}">
+                    <i class="fas fa-layer-group"></i>
+                </button>
+                <button type="button"
+                    class="ov-scene-preview-level-btn btn-scene-preview-level-step"
+                    data-level-step="-1"
+                    title="{{localize 'origin-vault.scenes.previewLevelDown'}}">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            {{/if}}
+            {{else if (isItem previewItem)}}
+
+            <div class="item-card-preview">
+                <div class="item-card-header">
+                    <img src="{{previewItem.path}}" alt="{{previewItem.displayName}}" class="item-card-icon">
+                    <div class="item-card-title-block">
+                        <h2 class="item-card-name">{{previewItem.displayName}}</h2>
+                        {{#if previewItem.metadata.itemType}}
+                        <span class="item-card-type-badge">{{previewItem.itemTypeLabel}}</span>
+                        {{/if}}
+                    </div>
+                </div>
+
+                {{#if previewItem.autoTags.length}}
+                <div class="item-card-tags" style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">
+                    {{#each previewItem.autoTags}}
+                    <span class="item-auto-tag"
+                        style="display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px;
+                        font-weight: 600; background: {{this.color}}22; color: {{this.color}}; border: 1px solid {{this.color}}44;">{{this.name}}</span>
+                    {{/each}}
+                </div>
+                {{/if}}
+                {{#if previewItem.systemFields}}
+                <div class="item-card-fields">
+                    {{#each previewItem.systemFields}}
+                    <div class="item-card-field">
+                        <span class="field-icon">{{this.icon}}</span>
+                        <span class="field-label">{{this.label}}</span>
+                        <span class="field-value">{{this.value}}</span>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                {{#if previewItem.enrichedDescription}}
+                <div class="item-card-description">
+                    {{{previewItem.enrichedDescription}}}
+                </div>
+                {{/if}}
+            </div>
+            {{else if (isVideo previewItem.path)}}
+            <video src="{{previewItem.path}}" autoplay controls loop
+                style="max-width:100%;max-height:100%;outline:none;"></video>
+            {{else if (isAudio previewItem.path)}}
+            <div class="audio-fullscreen-player" data-item-id="{{previewItem.id}}">
+                <canvas class="audio-fullscreen-waveform"></canvas>
+                <div class="audio-fullscreen-playhead"></div>
+                <div class="audio-fullscreen-unplayed"></div>
+                <div class="audio-fullscreen-controls">
+                    <button class="btn-audio-play-fullscreen"><i class="fas fa-play"></i></button>
+                    <span class="audio-fullscreen-time">0:00 / --:--</span>
+                </div>
+                <audio class="audio-fullscreen-el" src="{{previewItem.path}}"></audio>
+            </div>
+            {{else}}
+            <img src="{{previewItem.path}}" alt="{{previewItem.displayName}}" style="cursor: grab;">
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{else}}
+
+<div class="toolbar">
+    <div class="toolbar-left">
+
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" placeholder="{{localize 'origin-vault.search.placeholder'}}"
+                value="{{searchQuery}}">
+            {{#if searchQuery}}<button class="btn-clear-search"><i class="fas fa-times"></i></button>{{/if}}
+        </div>
+        <button class="btn-toggle-search-mode {{#if (eq searchMode 'exact')}}active{{/if}}"
+            title="{{#if (eq searchMode 'exact')}}{{localize 'origin-vault.search.modeExact'}}{{else}}{{localize 'origin-vault.search.modeFuzzy'}}{{/if}}">
+            <i class="fas {{#if (eq searchMode 'exact')}}fa-align-left{{else}}fa-magic{{/if}}"></i>
+        </button>
+
+        <div class="filter-panel-container" style="position: relative;"></div>
+        <div class="item-filter-container" style="position: relative;"></div>
+    </div>
+
+    <div class="toolbar-center">
+
+        <div class="breadcrumb">
+            {{#if currentFolder}}
+            <span class="breadcrumb-item">{{currentFolder.name}}</span>
+            {{else}}
+            <span class="breadcrumb-item">{{localize 'origin-vault.folders.all'}}</span>
+            {{/if}}
+            <span class="item-count-badge">{{localize 'origin-vault.ui.itemsCount' count=items.length}}</span>
+        </div>
+    </div>
+
+    <div class="toolbar-right">
+
+        <div class="grid-size-control" title="{{localize 'origin-vault.ui.gridSizeTitle'}}">
+            <i class="fas fa-th-large"></i>
+            <input type="range" class="ov-grid-slider" min="100" max="500" value="{{settings.gridSize}}" step="10">
+        </div>
+
+        <button class="btn-toggle-drag-mode {{#if (eq dragMode 'copy')}}active copy-mode{{/if}}"
+            title="{{#if (eq dragMode 'copy')}}{{localize 'origin-vault.ui.dragModeCopy'}}{{else}}{{localize 'origin-vault.ui.dragModeMove'}}{{/if}}">
+            <i class="fas {{#if (eq dragMode 'copy')}}fa-copy{{else}}fa-cut{{/if}}"></i>
+        </button>
+
+        <button class="btn-upload-files" title="{{localize 'origin-vault.upload.title'}}">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </button>
+
+        <button class="btn-toggle-browser {{#if browserVisible}}active{{/if}}"
+            title="{{localize 'origin-vault.browser.title'}}">
+            <i class="fas fa-folder-open"></i>
+        </button>
+
+        <button class="btn-toggle-scene-browser {{#if sceneBrowserVisible}}active{{/if}}"
+            title="{{localize 'origin-vault.scenes.browserTitle'}}">
+            <i class="fas fa-map"></i>
+        </button>
+
+        <button class="btn-toggle-item-browser {{#if itemBrowserVisible}}active{{/if}}"
+            title="{{localize 'origin-vault.items.browserTitle'}}">
+            <i class="fas fa-box-open"></i>
+        </button>
+
+        <button class="btn-toggle-actor-browser {{#if actorBrowserVisible}}active{{/if}}"
+            title="{{localize 'origin-vault.actors.browserTitle'}}">
+            <i class="fas fa-users"></i>
+        </button>
+
+        <button class="btn-locate-scene" title="{{localize 'origin-vault.toolbar.locateScene'}}">
+            <i class="fas fa-crosshairs"></i>
+        </button>
+
+        <button class="btn-export-library" title="{{localize 'origin-vault.toolbar.exportLibrary'}}">
+            <i class="fas fa-file-export"></i>
+        </button>
+        <button class="btn-import-library" title="{{localize 'origin-vault.toolbar.importLibrary'}}">
+            <i class="fas fa-file-import"></i>
+        </button>
+
+        <div class="divider"></div>
+
+    </div>
+</div>
+
+<div class="asset-grid {{settings.viewMode}}-view">
+
+    {{#if subfolders}}
+    <div class="subfolders-row">
+        {{#each subfolders}}
+        <div class="subfolder-card" data-folder-id="{{this.id}}">
+            <div class="subfolder-thumbnail" {{#if
+                this.coverImage}}style="background-image: url('{{this.coverImage}}');" {{/if}}>
+                {{#if this.coverImage}}
+                <div class="folder-cover-overlay">
+                    <i class="fas fa-folder"></i>
+                </div>
+                {{else}}
+                <i class="fas fa-folder" style="color: {{#if this.color}}{{this.color}}{{else}}#FFD700{{/if}}"></i>
+                {{/if}}
+            </div>
+            <div class="subfolder-name" title="{{this.name}}">{{this.name}}</div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{#each items}}
+    <div class="asset-card {{#if (includes ../selectedItems this.id)}}selected{{/if}}" data-item-id="{{this.id}}"
+        data-aspect-ratio="{{this.aspectRatio}}" draggable="true">
+
+        <div class="asset-thumbnail" style="aspect-ratio: {{this.aspectRatio}}">
+
+            <div
+                class="file-type-badge{{#if this.isSceneImported}} imported-scene{{/if}}{{#if this.isWorldScene}} world-scene{{/if}}{{#if (isItem this)}} item-badge{{/if}}{{#if (isActor this)}} actor-badge{{/if}}{{#if this.isItemImported}} imported-item{{/if}}{{#if this.isActorImported}} imported-actor{{/if}}">
+                {{fileTypeBadge this}}</div>
+
+            {{#if this.thumbnailGenerated}}
+            <img src="{{thumbnailSrc this}}" alt="{{this.displayName}}" loading="lazy">
+            {{else}}
+            <div class="thumbnail-placeholder">
+                {{#if (isVideo this.path)}}
+                <i class="fas fa-film"></i>
+                {{else}}
+                <i class="fas fa-image"></i>
+                {{/if}}
+            </div>
+            {{/if}}
+
+            {{#unless (or (isVideo this.path) (isAudio this.path))}}
+            <div class="preview-badge ov-preview-badge">
+                <i class="fas fa-eye"></i>
+            </div>
+            {{/unless}}
+
+            {{#if (or (isVideo this.path) (isAudio this.path))}}
+            <div class="inline-progress ov-inline-progress">
+                <div class="bar ov-inline-progress-bar"></div>
+            </div>
+            {{/if}}
+
+            {{#if (isAudio this.path)}}
+            <div class="waveform-container ov-waveform-container" data-item-id="{{this.id}}">
+                <canvas class="ov-waveform-canvas"></canvas>
+            </div>
+            {{/if}}
+        </div>
+
+        <div class="asset-info">
+            <div class="asset-name"
+                title="{{#if this.displayName}}{{this.displayName}}{{else}}{{fileName this.path}}{{/if}}">
+                {{#if this.displayName}}{{this.displayName}}{{else}}{{fileName this.path}}{{/if}}
+            </div>
+            <div class="asset-meta" style="display: none;"></div>
+        </div>
+    </div>
+    {{else}}
+
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>{{#if searchQuery}}{{localize 'origin-vault.search.noResults'}}{{else}}{{localize
+            'origin-vault.empty.folder'}}{{/if}}</p>
+        <p class="empty-hint">{{localize 'origin-vault.empty.hint'}}</p>
+    </div>
+    {{/each}}
+</div>
+{{/if}}
